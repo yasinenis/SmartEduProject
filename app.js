@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import pageRoute from './routes/pageRoute.js';
+import courseRoute from './routes/courseRoute.js';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/', pageRoute);
+app.use('/courses', courseRoute);
 
 const port = 3000;
 app.listen(port, () => {
