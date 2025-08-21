@@ -1,0 +1,23 @@
+{
+  "name": "smartedu",
+  "version": "1.0.0",
+  "description": "Education Portal",
+  "keywords": [
+    "education",
+    "portal",
+    "node.js"
+  ],
+  "license": "ISC",
+  "author": "Yasin Eniş",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
