@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import slugify from 'slugify';
+
 const Schema = mongoose.Schema;
 
 const CourseSchema = new Schema({
@@ -17,6 +19,18 @@ const CourseSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  slug: {
+    type: String,
+    unique: true,
+  },
+});
+
+CourseSchema.pre('validate', function (next) {
+  this.slug = slugify(this.name, {
+    lower: true,
+    strict: true,
+  });
+  next(); // go on for another middleware
 });
 
 const Course = mongoose.model('Course', CourseSchema);

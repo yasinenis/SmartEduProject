@@ -30,3 +30,18 @@ export async function getAllCourses(req, res) {
     });
   }
 }
+
+export async function getCourse(req, res) {
+  try {
+    const course = await Course.findOne({ slug: req.params.slug });
+    res.status(200).render('course', {
+      course,
+      page_name: 'courses',
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      err,
+    });
+  }
+}
