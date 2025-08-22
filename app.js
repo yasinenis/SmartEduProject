@@ -2,6 +2,10 @@ import express from 'express';
 
 import mongoose from 'mongoose';
 
+import session from 'express-session';
+
+import MongoStore from 'connect-mongo';
+
 import pageRoute from './routes/pageRoute.js';
 import courseRoute from './routes/courseRoute.js';
 import categoryRoute from './routes/categoryRoute.js';
@@ -24,9 +28,21 @@ app.set('view engine', 'ejs');
 
 // Middlewares
 app.use(express.static('public'));
-
 app.use(express.json()); // converts url data to json     important these for using req.body
 app.use(express.urlencoded({ extended: true })); // helps us to read data in url
+app.use(
+  session({
+    secret: 'my_keyboard_cat',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1/smartedu-db' }),
+  })
+);
+
+app.use((req, res, next) => {
+  res.locals.userIN = req.session.userID; // sadece o request için geçerli
+  next();
+});
 
 // Routes
 app.use('/', pageRoute);

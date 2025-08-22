@@ -41,7 +41,9 @@ export async function loginUser(req, res) {
     }
 
     // USER SESSION
-    res.status(200).send('YOU ARE LOGGED IN SUCCESFULLY!');
+    req.session.userID = user._id;
+
+    res.status(200).redirect('/users/dashboard');
   } catch (err) {
     res.status(400).json({
       status: 'fail',
@@ -49,4 +51,18 @@ export async function loginUser(req, res) {
       stack: err.stack,
     });
   }
+}
+
+export async function logoutUser(req, res) {
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
+}
+
+export async function getDashboardPage(req, res) {
+  const user = await User.findOne({ _id: req.session.userID });
+  res.status(200).render('dashboard', {
+    page_name: 'dashboard',
+    user,
+  });
 }
