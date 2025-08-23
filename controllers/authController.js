@@ -6,7 +6,7 @@ export async function createUser(req, res) {
   try {
     const user = await User.create(req.body);
 
-    res.status(201).json({
+    res.status(201).redirect('/login').json({
       status: 'success',
       user,
     });
