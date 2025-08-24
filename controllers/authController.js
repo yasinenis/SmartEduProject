@@ -36,7 +36,7 @@ export async function loginUser(req, res) {
     }
 
     // password control
-    const same = bcrypt.compare(password, user.password);
+    const same = await bcrypt.compare(password, user.password);
 
     if (!same) {
       return res
@@ -64,7 +64,9 @@ export async function logoutUser(req, res) {
 }
 
 export async function getDashboardPage(req, res) {
-  const user = await User.findOne({ _id: req.session.userID });
+  const user = await User.findOne({ _id: req.session.userID }).populate(
+    'courses'
+  );
   const categories = await Category.find();
   const courses = await Course.find({ user: req.session.userID });
   res.status(200).render('dashboard', {
