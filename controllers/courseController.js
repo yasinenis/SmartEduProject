@@ -23,6 +23,7 @@ export async function createCourse(req, res) {
 export async function getAllCourses(req, res) {
   try {
     const categorySlug = req.query.categories;
+    const query = req.query.search;
     const category = await Category.findOne({ slug: categorySlug });
 
     let filter = {};
@@ -31,7 +32,22 @@ export async function getAllCourses(req, res) {
       filter = { category: category._id };
     }
 
-    const courses = await Course.find(filter).sort('-createdAt');
+    if (query) {
+      filter = { name: query };
+    }
+
+    if (!query && !categorySlug) {
+      (filter.name = ''), (filter.category = null);
+    }
+
+    const courses = await Course.find({
+      $or: [
+        { name: { $regex: '.*' + filter.name + '.*', $options: 'i' } },
+        { category: filter.category },
+      ],
+    })
+      .sort('-createdAt')
+      .populate('user');
     const categories = await Category.find();
 
     res.status(200).render('courses', {
@@ -53,10 +69,12 @@ export async function getCourse(req, res) {
     const course = await Course.findOne({ slug: req.params.slug }).populate(
       'user'
     );
+    const categories = await Category.find();
     res.status(200).render('course', {
       course,
       page_name: 'courses',
       user,
+      categories,
     });
   } catch (err) {
     res.status(400).json({
