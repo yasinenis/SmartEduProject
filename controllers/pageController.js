@@ -1,3 +1,7 @@
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
+
 export async function getIndexPage(req, res) {
   console.log(req.session.userID);
   res.status(200).render('index', {
@@ -21,4 +25,46 @@ export async function getLoginPage(req, res) {
   res.status(200).render('login', {
     page_name: 'login',
   });
+}
+
+export async function getContactPage(req, res) {
+  res.status(200).render('contact', {
+    page_name: 'contact',
+  });
+}
+
+export async function sendEmail(req, res) {
+  const outputMessage = `
+  <h3>Mail Details </h3>
+  <ul>
+    <li>Name: ${req.body.name}</li>
+    <li>Email: ${req.body.email} </li>
+  </ul>
+  <h3>Message</h3>
+  <p>${req.body.message}</p>
+  `;
+
+  let transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.MAIL, // gmail account
+      pass: process.env.APP_PASS, // gmail password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `"SMART EDU Contact Form" <${process.env.MAIL}>`, // sender address
+    to: process.env.MAIL,
+    replyTo: `${req.body.email}`,
+    subject: 'SMART EDU Contact Form New Message',
+    html: outputMessage,
+  });
+
+  console.log('Message sent: %s', info.messageId);
+
+  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+  res.status(200).redirect('contact');
 }
