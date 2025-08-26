@@ -34,7 +34,8 @@ export async function getContactPage(req, res) {
 }
 
 export async function sendEmail(req, res) {
-  const outputMessage = `
+  try {
+    const outputMessage = `
   <h3>Mail Details </h3>
   <ul>
     <li>Name: ${req.body.name}</li>
@@ -44,27 +45,29 @@ export async function sendEmail(req, res) {
   <p>${req.body.message}</p>
   `;
 
-  let transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.MAIL, // gmail account
-      pass: process.env.APP_PASS, // gmail password
-    },
-  });
+    let transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.MAIL, // gmail account
+        pass: process.env.APP_PASS, // gmail password
+      },
+    });
 
-  let info = await transporter.sendMail({
-    from: `"SMART EDU Contact Form" <${process.env.MAIL}>`, // sender address
-    to: process.env.MAIL,
-    replyTo: `${req.body.email}`,
-    subject: 'SMART EDU Contact Form New Message',
-    html: outputMessage,
-  });
+    let info = await transporter.sendMail({
+      from: `"SMART EDU Contact Form" <${process.env.MAIL}>`, // sender address
+      to: process.env.MAIL,
+      replyTo: `${req.body.email}`,
+      subject: 'SMART EDU Contact Form New Message',
+      html: outputMessage,
+    });
 
-  console.log('Message sent: %s', info.messageId);
+    req.flash('success', 'We received your message succesfully.');
 
-  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-
-  res.status(200).redirect('contact');
+    res.status(200).redirect('contact');
+  } catch (error) {
+    req.flash('error', `Something went wrong! ${error}`);
+    res.status(200).redirect('contact');
+  }
 }
