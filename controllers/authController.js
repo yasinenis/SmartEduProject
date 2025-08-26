@@ -6,19 +6,20 @@ import Course from '../models/Course.js';
 
 import bcrypt from 'bcrypt';
 
+import { validationResult } from 'express-validator';
+
 export async function createUser(req, res) {
   try {
     const user = await User.create(req.body);
 
-    res.status(201).redirect('/login').json({
-      status: 'success',
-      user,
-    });
+    res.status(201).redirect('/login');
   } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      err,
-    });
+    const errors = validationResult(req);
+
+    for (let i = 0; i < errors.array().length; i++) {
+      req.flash('error', errors.array()[i].msg);
+    }
+    res.status(400).redirect('/register');
   }
 }
 
@@ -30,24 +31,23 @@ export async function loginUser(req, res) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ status: 'fail', message: 'User not found' });
+      req.flash('error', 'User not found! Please check your email address!');
+      return res.status(400).redirect('/login');
     }
 
     // password control
     const same = await bcrypt.compare(password, user.password);
 
     if (!same) {
-      return res
-        .status(400)
-        .json({ status: 'fail', message: 'Incorrect password' });
+      req.flash('error', 'Your password is not correct');
+      return res.status(400).redirect('/login');
     }
 
     // USER SESSION
     req.session.userID = user._id;
 
-    res.status(200).redirect('/users/dashboard');
+    req.flash('success', 'You are Logged in succesfully.');
+    return res.status(200).redirect('/users/dashboard');
   } catch (err) {
     res.status(400).json({
       status: 'fail',

@@ -14,7 +14,18 @@
     <div id="overviews" class="section wb">
         <div class="container">
             <div class="row"> 
-                <div class="col-lg-12 blog-post-single">					
+                <div class="col-lg-12 blog-post-single">	
+					<% if (flashMessages) { %>
+                        <% if(flashMessages.success) { %>
+                            <div class="alert alert-success">
+                                <%= flashMessages.success %>
+                            </div>
+                        <% } else if (flashMessages.error) { %>
+                            <div class="alert alert-danger">
+                                <%= flashMessages.error %>
+                            </div>
+                        <% } %>
+                    <% } %>				
 					<div class="blog-author">
 						<div class="author-bio">
 							<h3 class="author_name"><a href="#">Courses Enrolled By : <%= user.name %></a></h3>
