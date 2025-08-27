@@ -225,6 +225,65 @@
 
 	<% } %>
 
+	<% if(user.role === 'admin') { %>
+	
+	<div class="all-title-box">
+		<div class="container text-center">
+			<h1><%= user.name %><span class="m_1">ADMIN</span></h1>
+		</div>
+	</div>
+    <div id="overviews" class="section wb">
+        <div class="container">
+            <div class="row"> 
+                <div class="col-lg-12 blog-post-single">	
+					<% if (flashMessages) { %>
+                        <% if(flashMessages.success) { %>
+                            <div class="alert alert-z alert-success">
+                                <%= flashMessages.success %>
+                            </div>
+                        <% } else if (flashMessages.error) { %>
+                            <div class="alert alert-z alert-danger">
+                                <%= flashMessages.error %>
+                            </div>
+                        <% } %>
+                    <% } %>				
+					<div class="blog-author">
+						<div class="author-bio">
+							<h3 class="author_name"><a href="#">Logged In as : <%= user.name %></a></h3>
+						</div>
+					</div>	
+                </div><!-- end col -->
+            </div><!-- end row -->
+			<div class="row mt-5">
+				<table class="table">
+				  <thead>
+				    <tr>
+					  <th scope="col">#</th>
+				      <th scope="col">ID#</th>
+				      <th scope="col">Email</th>
+				      <th scope="col">Role</th>
+				      <th scope="col">Delete</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				<% for(let i = 0; i< users.length; i++) { %>
+				    <tr>
+				      <th scope="row"><%= i %></th>
+				      <td><%= users[i].id %></td>
+				      <td><%= users[i].email %></td>
+				      <td><%= users[i].role %></td>
+				      <td><a href="/users/<%= users[i].id %>?_method=DELETE" onclick="return confirm('ARE YOU SURE?')" class="btn btn-danger rounded-0 text-white"><span>DELETE</span></a></td>
+
+				    </tr>
+				  </tbody>
+				<% } %>
+				</table> 
+				
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </div><!-- end section -->
+	<% } %>
+
 <% } %>
 
     <%- include('partials/_footer'); %>
