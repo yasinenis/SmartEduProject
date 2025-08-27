@@ -8,6 +8,8 @@ import MongoStore from 'connect-mongo';
 
 import flash from 'connect-flash';
 
+import methodOverride from 'method-override';
+
 import pageRoute from './routes/pageRoute.js';
 import courseRoute from './routes/courseRoute.js';
 import categoryRoute from './routes/categoryRoute.js';
@@ -45,6 +47,7 @@ app.use((req, res, next) => {
   res.locals.flashMessages = req.flash();
   next();
 });
+app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 
 app.use((req, res, next) => {
   res.locals.userIN = req.session.userID; // sadece o request için geçerli
